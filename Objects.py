@@ -37,9 +37,6 @@ def check_cross(N, M, point):  ##运用SH算法 N为法向量，M为平面一点
 
 @numba.jit(nopython=True)
 def hit_3(point, trans, camera_dest, color, sight_dist):  ##屎山第三层之最终执行
-    trans = trans.astype(numpy.float64)
-    point = point.astype(numpy.float64)
-    camera_dest = camera_dest.astype(numpy.float64)
     after_trans = trans @ (
         point
         - camera_dest
@@ -88,7 +85,7 @@ def hit_3(point, trans, camera_dest, color, sight_dist):  ##屎山第三层之�
 
 @numba.jit(nopython=True)
 def mat_dot(a, b):
-    return a @ b
+    return (a @ b).astype(numpy.float64)
 
 
 class Camera:
@@ -133,7 +130,7 @@ class Camera:
 
 class Wall:
     def __init__(self, point, color):
-        self.point = point
+        self.point = point.astype(numpy.float64)
         self.color = color
 
     def hit(self, trans, camera: Camera):
