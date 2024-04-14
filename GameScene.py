@@ -97,8 +97,8 @@ class GameScene(Scenes.Scene):
                 new_dest[0] = 0.0
             elif new_dest[0] > (self.map.shape[0] - 2) * 40:
                 new_dest[0] = (self.map.shape[0] - 2) * 40.0
-            if new_dest[1] > 500.0:
-                new_dest[1] = 500.0
+            if new_dest[1] > 1000.0:
+                new_dest[1] = 1000.0
             elif new_dest[1] < 0.0:
                 new_dest[1] = 0.0
             if new_dest[2] < 0:
