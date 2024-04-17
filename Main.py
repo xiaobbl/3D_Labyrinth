@@ -24,6 +24,5 @@ while True:
     manager.input(pygame.event.get())
     manager.update()
     end = time.time()
-    print(end - start)
     if end - start < 0.007:
         time.sleep(0.007 - end + start)
