@@ -89,6 +89,7 @@ def mat_dot(a, b):
 
 
 class Camera:
+    __slots__ = "dest", "vision", "sight_dist", "rotate_statue", "on_move"
 
     def __init__(self, x, z, y=20):
         self.dest = numpy.array([[x], [y], [z]]).astype(numpy.float64)
@@ -129,6 +130,8 @@ class Camera:
 
 
 class Wall:
+    __slots__ = "point", "color"
+
     def __init__(self, point, color):
         self.point = point.astype(numpy.float64)
         self.color = color
