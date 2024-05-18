@@ -7,6 +7,8 @@ import pygame
 import time
 
 pygame.init()
+pygame.display.set_icon(pygame.image.load("icon.ico"))
+pygame.display.set_caption("3D_Labyrinth")
 screen = pygame.display.set_mode((1280, 720))
 scene_lists = {}
 scene_lists["GameScene"] = GameScene.GameScene()
