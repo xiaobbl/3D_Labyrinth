@@ -18,14 +18,7 @@ class GameScene(Scenes.Scene):
     def join_in(
         self, manager: Scenes.SceneManager, args
     ):  ##第一位为地图，第二位为screen
-        args[1].fill((255, 255, 255))
-        font = pygame.font.Font(pygame.font.match_font("SimSun"), 100)
-        text = font.render("加载中", True, (0, 0, 0))
-        textRect = text.get_rect()
-        textRect.centerx = 640
-        textRect.centery = 360
-        args[1].blit(text, textRect)
-        pygame.display.update()
+        manager.render_word("加载中", 100)
         self.wall_list, self.camera, self.map, self.type = MapFuncs.getWall(
             manager.mapdist
         )
@@ -114,11 +107,13 @@ class GameScene(Scenes.Scene):
         screen.fill((255, 255, 255))
         for i in sorted(self.wall_cache, reverse=True):
             for j in self.wall_cache[i]:
-                pygame.draw.polygon(screen, (50, 50, 50), j[0], width=5)
-                pygame.draw.polygon(screen, j[1], j[0])
+                pygame.draw.polygon(
+                    screen, (50, 50, 50), [[y * 2 for y in x] for x in j[0]], width=10
+                )
+                pygame.draw.polygon(screen, j[1], [[y * 2 for y in x] for x in j[0]])
         return super().draw(screen)
 
-    def input(self, event: Scenes.Event):
+    def input(self, event: Scenes.Event, scale_x: float, scale_y: float):
         if event.type == pygame.MOUSEMOTION:
             self.camera.vision[0] -= event.rel[0] / 640 * pi
             self.camera.vision[1] -= event.rel[1] / 640 * pi
@@ -150,7 +145,7 @@ class GameScene(Scenes.Scene):
                 self.camera.on_move[4] = True
             elif event.key == pygame.K_LSHIFT:
                 self.camera.on_move[5] = True
-        return super().input(event)
+        return super().input(event, scale_x, scale_y)
 
     def jump_out(self, manager, args=None):
         self.wall_cache = {}

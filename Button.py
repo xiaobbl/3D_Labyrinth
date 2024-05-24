@@ -3,7 +3,7 @@ import pygame
 
 class Button:
     def __init__(self, message: str, centerx, centery, width, height):
-        self.font = pygame.font.Font(pygame.font.match_font("SimSun"), 30)
+        self.font = pygame.font.Font(pygame.font.match_font("SimSun"), 60)
         self.text = self.font.render(message, True, (255, 255, 255))
         self.mouse_in = False
         self.lbuttondown = False
@@ -15,30 +15,32 @@ class Button:
         self.width = width
         self.height = height
 
-    def deal_mouse(self, event: pygame.event.Event):
+    def deal_mouse(self, event: pygame.event.Event, scale_x: float, scale_y: float):
         if event.type == pygame.MOUSEBUTTONUP and event.button == 1:
             self.lbuttondown = False
             return self.mouse_in
         if event.type == pygame.MOUSEMOTION:
             x, y = event.pos
             self.mouse_in = (
-                abs(x - self.centerx) <= self.width // 2
-                and abs(y - self.centery) <= self.height // 2
+                abs(x / scale_x - self.centerx) <= self.width // 2
+                and abs(y / scale_y - self.centery) <= self.height // 2
             )
         elif event.type == pygame.MOUSEBUTTONDOWN:
             self.lbuttondown = event.button == 1
         return False
 
     def draw(self, screen: pygame.Surface):
-        width = 12
+        width = 24
         color = (211, 211, 211)
         if self.mouse_in:
             if self.lbuttondown:
                 color = (128, 128, 128)
             else:
                 color = (169, 169, 169)
-            width = 14
-        pygame.draw.rect(screen, (105, 105, 105), self.rect.inflate(width, width), 0, 6)
+            width = 28
+        pygame.draw.rect(
+            screen, (105, 105, 105), self.rect.inflate(width, width), 0, 12
+        )
         pygame.draw.rect(screen, color, self.rect)
         screen.blit(self.text, self.text.get_rect(center=(self.centerx, self.centery)))
 
@@ -53,11 +55,11 @@ class SettingUnit:
         self.min = min
         self.max = max
         self.x = x
-        self.sub = (x + 100 + 20, y + 25)
-        self.add = (self.sub[0] + 150 + 20, y + 25)
-        self.add_button = Button("+", self.add[0], self.add[1], 40, 40)
-        self.sub_button = Button("-", self.sub[0], self.sub[1], 40, 40)
-        self.font = pygame.font.Font(pygame.font.match_font("SimSun"), 30)
+        self.sub = (x + 200 + 40, y + 50)
+        self.add = (self.sub[0] + 300 + 40, y + 50)
+        self.add_button = Button("+", self.add[0], self.add[1], 80, 80)
+        self.sub_button = Button("-", self.sub[0], self.sub[1], 80, 80)
+        self.font = pygame.font.Font(pygame.font.match_font("SimSun"), 60)
         self.change_statue = None
         self.text1 = self.font.render(message, True, (0, 0, 0))
         self.text2 = self.font.render(str(self.value), True, (0, 0, 0))
@@ -70,10 +72,10 @@ class SettingUnit:
         self.add_button.draw(screen)
         self.sub_button.draw(screen)
 
-    def input(self, event: pygame.event.Event):
-        if self.add_button.deal_mouse(event):
+    def input(self, event: pygame.event.Event, scale_x: float, scale_y: float):
+        if self.add_button.deal_mouse(event, scale_x, scale_y):
             self.change_statue = "+"
-        elif self.sub_button.deal_mouse(event):
+        elif self.sub_button.deal_mouse(event, scale_x, scale_y):
             self.change_statue = "-"
         else:
             self.change_statue = None

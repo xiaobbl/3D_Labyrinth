@@ -13,18 +13,18 @@ class EditPlane:
         self.statue = None  ##结构：[类型，[行，列]]
         self.row = len(my_map)
         self.col = len(my_map[0])
-        self.height, self.width = 620, 620
+        self.height, self.width = 1240, 1240
         if self.row > self.col:
             self.width = int(self.col / self.row * self.width)
         elif self.col > self.row:
             self.height = int(self.row / self.col * self.height)
-        self.left = 360 - self.width / 2
-        self.top = 360 - self.height / 2
+        self.left = 720 - self.width / 2
+        self.top = 720 - self.height / 2
         self.unit_width = self.height / self.row
-        if not self.unit_width < 12.5:
+        if not self.unit_width < 25:
             self.spawn_width = self.unit_width * 0.8
         else:
-            self.spawn_width = 10.0
+            self.spawn_width = 20
 
     def draw(self, screen: Surface):
         canvas = pygame.Rect(self.left, self.top, self.width, self.height)
@@ -117,16 +117,16 @@ class EditScene(Scenes.Scene):
     def __init__(self):
         self.plane = None
         self.back_statue = False
-        self.back_button = Button.Button("返回", 70, 25, 100, 40)
-        self.pen_button = Button.Button("铅笔", 780, 100, 180, 50)
-        self.eraser_button = Button.Button("橡皮", 980, 100, 180, 50)
-        self.spawn_button = Button.Button("选择出生点", 1180, 100, 180, 50)
-        self.col_unit = Button.SettingUnit(750, 200, 4, 1, 4, 100, "列")
-        self.row_unit = Button.SettingUnit(750, 300, 4, 1, 4, 100, "行")
-        self.confirm_button = Button.Button("确认", 1180, 265, 180, 50)
-        self.new_button = Button.Button("新建地图", 780, 400, 180, 50)
-        self.read_button = Button.Button("读取地图", 980, 400, 180, 50)
-        self.save_button = Button.Button("保存地图", 1180, 400, 180, 50)
+        self.back_button = Button.Button("返回", 140, 50, 200, 80)
+        self.pen_button = Button.Button("铅笔", 1560, 200, 360, 100)
+        self.eraser_button = Button.Button("橡皮", 1960, 200, 360, 100)
+        self.spawn_button = Button.Button("选择出生点", 2360, 200, 360, 100)
+        self.col_unit = Button.SettingUnit(1500, 400, 4, 1, 4, 100, "列")
+        self.row_unit = Button.SettingUnit(1500, 600, 4, 1, 4, 100, "行")
+        self.confirm_button = Button.Button("确认", 2360, 530, 360, 100)
+        self.new_button = Button.Button("新建地图", 1560, 800, 360, 100)
+        self.read_button = Button.Button("读取地图", 1960, 800, 360, 100)
+        self.save_button = Button.Button("保存地图", 2360, 800, 360, 100)
         self.has_saved = True
         self.statue = "pen"  ##为pen，eraser或spawn
         self.lpress = False
@@ -166,36 +166,40 @@ class EditScene(Scenes.Scene):
         self.save_button.draw(screen)
         return super().draw(screen)
 
-    def input(self, event: Scenes.Event):
-        self.col_unit.input(event)
-        self.row_unit.input(event)
+    def input(self, event: Scenes.Event, scale_x: float, scale_y: float):
+        self.col_unit.input(event, scale_x, scale_y)
+        self.row_unit.input(event, scale_x, scale_y)
         self.confirm_change = self.confirm_change or self.confirm_button.deal_mouse(
-            event
+            event, scale_x, scale_y
         )
-        self.back_statue = self.back_statue or self.back_button.deal_mouse(event)
-        self.file_operate[0] = self.file_operate[0] or self.new_button.deal_mouse(event)
+        self.back_statue = self.back_statue or self.back_button.deal_mouse(
+            event, scale_x, scale_y
+        )
+        self.file_operate[0] = self.file_operate[0] or self.new_button.deal_mouse(
+            event, scale_x, scale_y
+        )
         self.file_operate[1] = self.file_operate[1] or self.read_button.deal_mouse(
-            event
+            event, scale_x, scale_y
         )
         self.file_operate[2] = self.file_operate[2] or self.save_button.deal_mouse(
-            event
+            event, scale_x, scale_y
         )
-        if self.eraser_button.deal_mouse(event):
+        if self.eraser_button.deal_mouse(event, scale_x, scale_y):
             self.statue = "eraser"
-        if self.pen_button.deal_mouse(event):
+        if self.pen_button.deal_mouse(event, scale_x, scale_y):
             self.statue = "pen"
-        if self.spawn_button.deal_mouse(event):
+        if self.spawn_button.deal_mouse(event, scale_x, scale_y):
             self.statue = "spawn"
         if hasattr(event, "pos"):
-            row = (event.pos[1] - self.plane.top) // self.plane.unit_width
-            col = (event.pos[0] - self.plane.left) // self.plane.unit_width
+            row = (event.pos[1] / scale_x - self.plane.top) // self.plane.unit_width
+            col = (event.pos[0] / scale_y - self.plane.left) // self.plane.unit_width
             if 0 <= row < self.plane.row and 0 <= col < self.plane.col:
                 self.plane.statue = [self.statue, [int(row), int(col)]]
             else:
                 self.plane.statue = None
         mouse_presses = pygame.mouse.get_pressed()
         self.lpress = mouse_presses[0] or self.lpress
-        return super().input(event)
+        return super().input(event, scale_x, scale_y)
 
     def update(self, manager: Scenes.SceneManager):
         self.col_unit.update()

@@ -7,9 +7,9 @@ import Scenes
 
 class MenuScene(Scenes.Scene):
     def __init__(self):
-        self.start_button = Button.Button("开始", 900, 260, 300, 50)
-        self.choose_button = Button.Button("选择地图", 900, 360, 300, 50)
-        self.edit_button = Button.Button("地图编辑器", 900, 460, 300, 50)
+        self.start_button = Button.Button("开始", 1800, 520, 600, 100)
+        self.choose_button = Button.Button("选择地图", 1800, 720, 600, 100)
+        self.edit_button = Button.Button("地图编辑器", 1800, 920, 600, 100)
         self.jump_statue = ""
         self.choose_statue = False
         super().__init__()
@@ -33,56 +33,38 @@ class MenuScene(Scenes.Scene):
             pygame.event.clear()
         return super().update(manager)
 
-    def input(self, event: Scenes.Event):
-        if self.start_button.deal_mouse(event):
+    def input(self, event: Scenes.Event, scale_x: float, scale_y: float):
+        if self.start_button.deal_mouse(event, scale_x, scale_y):
             self.jump_statue = "start"
-        if self.edit_button.deal_mouse(event):
+        if self.edit_button.deal_mouse(event, scale_x, scale_y):
             self.jump_statue = "edit"
-        self.choose_statue = self.choose_statue or self.choose_button.deal_mouse(event)
-        return super().input(event)
+        self.choose_statue = self.choose_statue or self.choose_button.deal_mouse(
+            event, scale_x, scale_y
+        )
+        return super().input(event, scale_x, scale_y)
 
     def draw(self, screen: Surface):
         screen.fill((255, 255, 255))
         pygame.draw.polygon(
             screen,
             (128, 128, 128),
-            [
-                [598.8283857149643, 514.4252880122111],
-                [598.763882802877, 195.50752994915092],
-                [373.2195447017151, 132.99260620786922],
-                [373.79997071577117, 576.706624782753],
-            ],
+            [[1196, 1028], [1196, 390], [746, 264], [746, 1152]],
         )
         pygame.draw.polygon(
             screen,
             (50, 50, 50),
-            [
-                [598.8283857149643, 514.4252880122111],
-                [598.763882802877, 195.50752994915092],
-                [373.2195447017151, 132.99260620786922],
-                [373.79997071577117, 576.706624782753],
-            ],
+            [[1196, 1028], [1196, 390], [746, 264], [746, 1152]],
             width=5,
         )
         pygame.draw.polygon(
             screen,
             (150, 150, 150),
-            [
-                [373.79997071577117, 576.706624782753],
-                [373.2195447017151, 132.99260620786922],
-                [95.49097876155452, 171.4457739937575],
-                [96.47091062253355, 538.4061704880099],
-            ],
+            [[746, 1152], [746, 264], [190, 342], [192, 1076]],
         )
         pygame.draw.polygon(
             screen,
             (50, 50, 50),
-            [
-                [373.79997071577117, 576.706624782753],
-                [373.2195447017151, 132.99260620786922],
-                [95.49097876155452, 171.4457739937575],
-                [96.47091062253355, 538.4061704880099],
-            ],
+            [[746, 1152], [746, 264], [190, 342], [192, 1076]],
             width=5,
         )
         self.start_button.draw(screen)

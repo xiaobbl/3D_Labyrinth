@@ -19,7 +19,7 @@ class Scene:
     def draw(self, screen: pygame.Surface):
         pass
 
-    def input(self, event: pygame.event.Event):
+    def input(self, event: pygame.event.Event, scale_x: float, scale_y: float):
         pass
 
 
@@ -28,6 +28,7 @@ class SceneManager:
         self,
         first_scene: Scene,
         SceneLists: dict,
+        window: pygame.Surface,
         screen: pygame.Surface,
         first_joinin_args,
     ):
@@ -36,6 +37,9 @@ class SceneManager:
         self.screen = screen
         self.mapdist = "default.json"
         self.reserved_scene = None
+        self.width = 1280
+        self.height = 720
+        self.window = window
         first_scene.join_in(self, first_joinin_args)
 
     def jump_to(
@@ -51,14 +55,17 @@ class SceneManager:
     def update(self):
         self.current_scene.update(self)
         self.current_scene.draw(self.screen)
+        self.width, self.height = self.window.get_width(), self.window.get_height()
+        pygame.transform.scale(self.screen, (self.width, self.height), self.window)
         pygame.display.update()
 
     def input(self, list: list):
+        self.width, self.height = self.window.get_width(), self.window.get_height()
         for i in list:
             if i.type == pygame.QUIT:
                 sys.exit(0)
             else:
-                self.current_scene.input(i)
+                self.current_scene.input(i, self.width / 2560, self.height / 1440)
 
     def reserve_jump(self, new_scene: Scene, args_in=None):
         self.reserved_scene = self.current_scene
@@ -69,3 +76,14 @@ class SceneManager:
         self.current_scene.jump_out(args_out)
         self.current_scene = self.reserved_scene
         self.reserved_scene = None
+
+    def render_word(self, message: str, size: int):  ##架构不良导致屎山的典型案例
+        self.window.fill((255, 255, 255))
+        font = pygame.font.Font(pygame.font.match_font("SimSun"), size)
+        text = font.render(message, True, (0, 0, 0))
+        textRect = text.get_rect()
+        textRect.centerx = self.window.get_width() / 2
+        textRect.centery = self.window.get_height() / 2
+        self.window.blit(text, textRect)
+        pygame.display.update()
+        pass
