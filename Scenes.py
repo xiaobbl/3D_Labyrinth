@@ -39,6 +39,7 @@ class SceneManager:
         self.reserved_scene = None
         self.width = 1280
         self.height = 720
+        self.full_window = False
         self.window = window
         first_scene.join_in(self, first_joinin_args)
 
@@ -60,11 +61,21 @@ class SceneManager:
         pygame.display.update()
 
     def input(self, list: list):
-        self.width, self.height = self.window.get_width(), self.window.get_height()
         for i in list:
             if i.type == pygame.QUIT:
                 sys.exit(0)
             else:
+                if i.type == pygame.KEYUP and i.key == pygame.K_F11:
+                    if self.full_window:
+                        pygame.display.set_mode((1280, 720), pygame.RESIZABLE)
+                    else:
+                        info = pygame.display.list_modes()
+                        pygame.display.set_mode(info[0], pygame.FULLSCREEN)
+                    self.full_window = not self.full_window
+                self.width, self.height = (
+                    self.window.get_width(),
+                    self.window.get_height(),
+                )
                 self.current_scene.input(i, self.width / 2560, self.height / 1440)
 
     def reserve_jump(self, new_scene: Scene, args_in=None):
