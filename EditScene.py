@@ -191,8 +191,8 @@ class EditScene(Scenes.Scene):
         if self.spawn_button.deal_mouse(event, scale_x, scale_y):
             self.statue = "spawn"
         if hasattr(event, "pos"):
-            row = (event.pos[1] / scale_x - self.plane.top) // self.plane.unit_width
-            col = (event.pos[0] / scale_y - self.plane.left) // self.plane.unit_width
+            row = (event.pos[1] / scale_y - self.plane.top) // self.plane.unit_width
+            col = (event.pos[0] / scale_x - self.plane.left) // self.plane.unit_width
             if 0 <= row < self.plane.row and 0 <= col < self.plane.col:
                 self.plane.statue = [self.statue, [int(row), int(col)]]
             else:
